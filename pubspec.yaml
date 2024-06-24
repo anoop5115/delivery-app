@@ -37,6 +37,10 @@ dependencies:
   google_mlkit_text_recognition: ^0.4.0
   image_picker: ^0.8.5+3
   image_cropper: ^3.0.0
+  dart_levenshtein: ^1.0.1
+  string_similarity: ^2.0.0
+  get: ^4.6.6
+  google_ml_kit: ^0.12.0
 
 dev_dependencies:
   flutter_test:

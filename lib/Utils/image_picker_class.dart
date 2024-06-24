@@ -1,23 +1,23 @@
-import 'dart:developer';
+// import 'dart:developer';
 
-import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
 
-Future<String> pickImage({ImageSource? source}) async {
-  final picker = ImagePicker();
+// Future<String> pickImage({ImageSource? source}) async {
+//   final picker = ImagePicker();
 
-  String path = '';
+//   String path = '';
 
-  try {
-    final getImage = await picker.pickImage(source: source!);
+//   try {
+//     final getImage = await picker.pickImage(source: source!);
 
-    if (getImage != null) {
-      path = getImage.path;
-    } else {
-      path = '';
-    }
-  } catch (e) {
-    log(e.toString());
-  }
+//     if (getImage != null) {
+//       path = getImage.path;
+//     } else {
+//       path = '';
+//     }
+//   } catch (e) {
+//     log(e.toString());
+//   }
 
-  return path;
-}
+//   return path;
+// }
