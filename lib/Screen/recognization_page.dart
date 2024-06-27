@@ -68,7 +68,7 @@ class RecognizeController extends GetxController {
   var isBusy = false.obs;
   var cumulativeList = <List<String>>[].obs;
 
-  Future<void> processImage(String path) async {
+  Future<void> processImage(String path, BuildContext context) async {
     isBusy.value = true;
 
     final textRecognizer = GoogleMlKit.vision.textRecognizer();
@@ -108,6 +108,41 @@ class RecognizeController extends GetxController {
 
       cumulativeList
           .add(filteredList); // Add the filtered list to the cumulative list
+
+      // Show dialog box indicating "item added"
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            title: Text(
+              "Success",
+              style: TextStyle(
+                  color: Color.fromARGB(255, 92, 112, 202),
+                  fontWeight: FontWeight.bold),
+            ),
+            content: Text(
+              "Item added",
+              style: TextStyle(
+                  color: Color.fromARGB(255, 92, 112, 202),
+                  fontWeight: FontWeight.bold),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text(
+                  "OK",
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 92, 112, 202),
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
     } catch (e) {
       log(e.toString());
     } finally {
