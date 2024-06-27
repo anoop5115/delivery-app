@@ -25,6 +25,8 @@ class HomePage extends StatelessWidget {
                 fontFamily: 'Raleway'),
           ),
           bottom: TabBar(
+            labelColor: Color.fromARGB(255, 92, 112, 202),
+            indicatorColor: Color.fromARGB(255, 92, 112, 202),
             tabs: [
               Tab(text: 'All'),
               Tab(text: 'Xpress Bees'),
