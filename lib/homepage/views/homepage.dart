@@ -6,13 +6,21 @@ import 'package:ocr/Screen/recognization_page.dart';
 import 'package:ocr/Widgets/modal_dialog.dart';
 import 'package:ocr/controller/maincontroller.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final RecognizeController controller = Get.put(RecognizeController());
+  _HomePageState createState() => _HomePageState();
+}
 
+class _HomePageState extends State<HomePage> {
+  final RecognizeController controller = Get.put(RecognizeController());
+  final TextEditingController _pincodeController = TextEditingController();
+  String selectedTab = 'All';
+  String filterPincode = '';
+
+  @override
+  Widget build(BuildContext context) {
     return DefaultTabController(
       length: 4,
       child: Scaffold(
@@ -27,6 +35,12 @@ class HomePage extends StatelessWidget {
           bottom: TabBar(
             labelColor: Color.fromARGB(255, 92, 112, 202),
             indicatorColor: Color.fromARGB(255, 92, 112, 202),
+            onTap: (index) {
+              setState(() {
+                selectedTab =
+                    ['All', 'Xpress Bees', 'Shadowfax', 'Valmo'][index];
+              });
+            },
             tabs: [
               Tab(text: 'All'),
               Tab(text: 'Xpress Bees'),
@@ -35,32 +49,85 @@ class HomePage extends StatelessWidget {
             ],
           ),
         ),
-        body: Obx(() => controller.isBusy.value
-            ? Center(child: CircularProgressIndicator())
-            : TabBarView(
-                children: [
-                  _buildListView(controller.cumulativeList),
-                  _buildListView(controller.cumulativeList
-                      .where((list) => list.any(
-                          (line) => line.toLowerCase().contains('xpress bees')))
-                      .toList()),
-                  _buildListView(controller.cumulativeList
-                      .where((list) => list.any(
-                          (line) => line.toLowerCase().contains('shadowfax')))
-                      .toList()),
-                  _buildListView(controller.cumulativeList
-                      .where((list) => list
-                          .any((line) => line.toLowerCase().contains('valmo')))
-                      .toList()),
-                ],
-              )),
+        body: Column(
+          children: [
+            SizedBox(
+              height: 15,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _pincodeController,
+                decoration: InputDecoration(
+                  hintText: 'Enter Pincode',
+                  prefixIcon: Icon(Icons.search,
+                      color: Color.fromARGB(255, 92, 112, 202)),
+                  filled: true,
+                  fillColor: Colors.transparent,
+                  contentPadding: EdgeInsets.symmetric(vertical: 15.0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide:
+                        BorderSide(color: Color.fromARGB(255, 92, 112, 202)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide:
+                        BorderSide(color: Color.fromARGB(255, 92, 112, 202)),
+                  ),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    filterPincode = value;
+                  });
+                },
+              ),
+            ),
+            Expanded(
+              child: Obx(() => controller.isBusy.value
+                  ? Center(child: CircularProgressIndicator())
+                  : TabBarView(
+                      children: [
+                        _buildListView(controller.cumulativeList),
+                        _buildListView(controller.cumulativeList
+                            .where((list) => list.any((line) =>
+                                line.toLowerCase().contains('xpress bees')))
+                            .toList()),
+                        _buildListView(controller.cumulativeList
+                            .where((list) => list.any((line) =>
+                                line.toLowerCase().contains('shadowfax')))
+                            .toList()),
+                        _buildListView(controller.cumulativeList
+                            .where((list) => list.any(
+                                (line) => line.toLowerCase().contains('valmo')))
+                            .toList()),
+                      ],
+                    )),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildListView(List<List<String>> list) {
+    List<List<String>> filteredList = list;
+    if (filterPincode.isNotEmpty) {
+      filteredList = list.where((address) {
+        if (address.length < 2) return false;
+        List<String> secondLastLineWords =
+            address[address.length - 2].split(' ');
+        return secondLastLineWords.isNotEmpty &&
+            secondLastLineWords.last == filterPincode;
+      }).toList();
+    }
+
     return ListView.builder(
-      itemCount: list.length,
+      itemCount: filteredList.length,
       itemBuilder: (context, index) {
         return Container(
           margin: EdgeInsets.all(10),
@@ -77,7 +144,7 @@ class HomePage extends StatelessWidget {
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: list[index]
+                      children: filteredList[index]
                           .map((line) => Text(
                                 line,
                                 style: TextStyle(
