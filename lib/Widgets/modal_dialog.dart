@@ -16,10 +16,13 @@ void imagePickerModal(BuildContext context,
                   child: Container(
                     alignment: Alignment.center,
                     padding: const EdgeInsets.all(15),
-                    decoration: const BoxDecoration(color: Colors.grey),
+                    decoration: const BoxDecoration(
+                        color: Color.fromARGB(255, 92, 112, 202)),
                     child: const Text("Camera",
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20)),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.white)),
                   ),
                 ),
               ),
@@ -30,10 +33,13 @@ void imagePickerModal(BuildContext context,
                   child: Container(
                     alignment: Alignment.center,
                     padding: const EdgeInsets.all(15),
-                    decoration: const BoxDecoration(color: Colors.grey),
+                    decoration: const BoxDecoration(
+                        color: Color.fromARGB(255, 92, 112, 202)),
                     child: const Text("Gallery",
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20)),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.white)),
                   ),
                 ),
               ),

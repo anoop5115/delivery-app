@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:ocr/additems/add.dart';
+import 'package:ocr/additems/myapp.dart';
 import 'package:ocr/homepage/controller/controller.dart';
 import 'package:ocr/homepage/views/homepage.dart';
 
@@ -23,7 +24,7 @@ class HomeScreen extends StatelessWidget {
               // MedicalRecordSearch(),
               Add(),
               HomePage(),
-              Add()
+              MyApp1()
               // ProfileScreen()
             ],
           ),
@@ -35,8 +36,8 @@ class HomeScreen extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Color.fromARGB(255, 76, 79, 93),
-                Colors.grey.withOpacity(.5),
+                Color.fromARGB(255, 92, 112, 202),
+                Color.fromARGB(255, 92, 112, 202),
               ],
             ),
             gap: 8,
@@ -58,20 +59,26 @@ class HomeScreen extends StatelessWidget {
               GButton(
                 iconActiveColor: Colors.white,
                 text: "Add items",
+                iconColor: Color.fromARGB(166, 92, 112, 202),
+                textColor: Colors.white,
                 // iconActiveColor: Colors.green,
                 icon: Icons.more_vert,
               ),
               GButton(
                 iconActiveColor: Colors.white,
+                iconColor: Color.fromARGB(166, 92, 112, 202),
                 text: "Home",
+                textColor: Colors.white,
                 // iconActiveColor: Colors.green,
                 icon: Icons.home,
               ),
               GButton(
                 iconActiveColor: Colors.white,
-                text: "Profile",
+                iconColor: Color.fromARGB(166, 92, 112, 202),
+                text: "Go To",
+                textColor: Colors.white,
                 // iconActiveColor: Colors.green,
-                icon: Icons.person,
+                icon: Icons.arrow_right_alt,
               ),
             ],
           ),
