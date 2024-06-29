@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ocr/Screen/recognization_page.dart';
 import 'package:ocr/Widgets/modal_dialog.dart';
@@ -159,9 +158,13 @@ class _HomePageState extends State<HomePage> {
     if (filterLocation.isNotEmpty) {
       filteredList = filteredList.where((address) {
         return address.any((line) {
-          double similarity = StringSimilarity.compareTwoStrings(
-              line.toLowerCase(), filterLocation.toLowerCase());
-          return similarity >= 0.35;
+          // Split line into words, remove non-alphanumeric characters
+          List<String> words = line.split(RegExp(r'\W+'));
+          return words.any((word) {
+            double similarity = StringSimilarity.compareTwoStrings(
+                word.toLowerCase(), filterLocation.toLowerCase());
+            return similarity >= 0.65;
+          });
         });
       }).toList();
     }
