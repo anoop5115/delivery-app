@@ -42,7 +42,7 @@ class MyController extends GetxController {
       uiSettings: [
         AndroidUiSettings(
             toolbarTitle: 'Crop Image',
-            toolbarColor: Colors.blue,
+            toolbarColor: Color.fromARGB(255, 92, 112, 202),
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false),

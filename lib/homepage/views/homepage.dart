@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ocr/Screen/recognization_page.dart';
 import 'package:ocr/Widgets/modal_dialog.dart';
 import 'package:ocr/controller/maincontroller.dart';
+import 'package:string_similarity/string_similarity.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,8 +17,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final RecognizeController controller = Get.put(RecognizeController());
   final TextEditingController _pincodeController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
   String selectedTab = 'All';
   String filterPincode = '';
+  String filterLocation = '';
 
   @override
   Widget build(BuildContext context) {
@@ -51,40 +54,44 @@ class _HomePageState extends State<HomePage> {
         ),
         body: Column(
           children: [
-            SizedBox(
-              height: 15,
-            ),
+            SizedBox(height: 15),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: _pincodeController,
-                decoration: InputDecoration(
-                  hintText: 'Enter Pincode',
-                  prefixIcon: Icon(Icons.search,
-                      color: Color.fromARGB(255, 92, 112, 202)),
-                  filled: true,
-                  fillColor: Colors.transparent,
-                  contentPadding: EdgeInsets.symmetric(vertical: 15.0),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide:
-                        BorderSide(color: Color.fromARGB(255, 92, 112, 202)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide:
-                        BorderSide(color: Color.fromARGB(255, 92, 112, 202)),
-                  ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(15.0),
+                  border: Border.all(color: Color.fromARGB(255, 92, 112, 202)),
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    filterPincode = value;
-                  });
-                },
+                child: Column(
+                  children: [
+                    _buildSearchField(
+                      controller: _pincodeController,
+                      hintText: 'Enter Pincode',
+                      icon: Icons.search,
+                      onChanged: (value) {
+                        setState(() {
+                          filterPincode = value;
+                        });
+                      },
+                    ),
+                    Divider(
+                      color: Colors.grey.withOpacity(0.5),
+                      thickness: 1,
+                      height: 1,
+                    ),
+                    _buildSearchField(
+                      controller: _locationController,
+                      hintText: 'Enter Location',
+                      icon: Icons.location_on,
+                      onChanged: (value) {
+                        setState(() {
+                          filterLocation = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
             Expanded(
@@ -95,7 +102,7 @@ class _HomePageState extends State<HomePage> {
                         _buildListView(controller.cumulativeList),
                         _buildListView(controller.cumulativeList
                             .where((list) => list.any((line) =>
-                                line.toLowerCase().contains('xpress bees')))
+                                line.toLowerCase().contains('xpressbees')))
                             .toList()),
                         _buildListView(controller.cumulativeList
                             .where((list) => list.any((line) =>
@@ -114,15 +121,48 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildSearchField({
+    required TextEditingController controller,
+    required String hintText,
+    required IconData icon,
+    required Function(String) onChanged,
+  }) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: hintText,
+        prefixIcon: Icon(icon, color: Color.fromARGB(255, 92, 112, 202)),
+        filled: true,
+        fillColor: Colors.transparent,
+        contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: BorderSide.none,
+        ),
+      ),
+      onChanged: onChanged,
+    );
+  }
+
   Widget _buildListView(List<List<String>> list) {
     List<List<String>> filteredList = list;
+
     if (filterPincode.isNotEmpty) {
-      filteredList = list.where((address) {
-        if (address.length < 2) return false;
-        List<String> secondLastLineWords =
-            address[address.length - 2].split(' ');
-        return secondLastLineWords.isNotEmpty &&
-            secondLastLineWords.last == filterPincode;
+      filteredList = filteredList.where((address) {
+        return address.any((line) {
+          final regex = RegExp(r'\b\d{6}\b');
+          return regex.hasMatch(line) && line.contains(filterPincode);
+        });
+      }).toList();
+    }
+
+    if (filterLocation.isNotEmpty) {
+      filteredList = filteredList.where((address) {
+        return address.any((line) {
+          double similarity = StringSimilarity.compareTwoStrings(
+              line.toLowerCase(), filterLocation.toLowerCase());
+          return similarity >= 0.35;
+        });
       }).toList();
     }
 
